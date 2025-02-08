@@ -4,8 +4,10 @@ class Field:
     def __init__(self, size, ships):
         self.size = size
         self.grid = []
+
         for _ in range(size):
             self.grid.append([None] * size)
+
         self.ships_alive = ships
 
 # тут корабли изначально скрыты, нужно передать True
@@ -69,6 +71,17 @@ class BattleshipGame:
         print("Ваша расстановка кораблей:")
         self.place_ships_randomly(self.player_field, self.ships)
         self.player_field.display(show_ships=True)
+
+    def player_turn(self, x, y):
+        x = "ABCDEFGHIJ".index(x)
+        y -= 1
+
+        if self.computer_field.grid[y][x] == 'S':
+            print('Вы попали!')
+            self.computer_field.grid[y][x] = 'x'
+            self.computer_field.ships_alive -= 1
+        else:
+            print('Промах!')
 
 
 
