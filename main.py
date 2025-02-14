@@ -11,7 +11,7 @@ class Field:
         self.ships_alive = ships
 
 # тут корабли изначально скрыты, нужно передать True
-    def display(self, show_ships=False):
+    def display(self, show_ships=True):
         letters = "ABCDEFGHIJ"
         letter_string = "    "
         for letter in letters:
@@ -38,7 +38,7 @@ class BattleshipGame:
         self.player_field = Field(self.size, self.ships)
         self.computer_field = Field(self.size, self.ships)
 
-    # Это функция расстановки кораблей, она уже полностью написана
+    # Это функция расстановки кораблей
     def place_ships_randomly(self, field, num_ships):
         for _ in range(num_ships):
             placed = False
@@ -48,7 +48,7 @@ class BattleshipGame:
                     field.grid[coords[0]][coords[1]] = "S"
                     placed = True
 
-    # Это функция проверки расстановки кораблей, она уже полностью написана
+    # Это функция проверки расстановки кораблей
     def is_valid_ship_placement(self, field, coords, ship_length=1, ):
         x, y = coords
 
@@ -72,6 +72,38 @@ class BattleshipGame:
         self.place_ships_randomly(self.player_field, self.ships)
         self.player_field.display(show_ships=True)
 
+        while True:
+            x = input('Введите координату x - букву: ')
+            y = int(input('Введите координату y - цифру: '))
+
+            self.player_turn(x, y)
+
+            print("Расстановка кораблей компьютера:")
+            self.place_ships_randomly(self.computer_field, self.ships)
+            self.computer_field.display()
+
+            print("Ваша расстановка кораблей:")
+            self.place_ships_randomly(self.player_field, self.ships)
+            self.player_field.display(show_ships=True)
+
+            if self.computer_field.ships_alive == 0:
+                print('Вы победили! Все корабли компьютера потоплены')
+                break
+
+            self.computer_turn()
+
+            print("Расстановка кораблей компьютера:")
+            self.place_ships_randomly(self.computer_field, self.ships)
+            self.computer_field.display()
+
+            print("Ваша расстановка кораблей:")
+            self.place_ships_randomly(self.player_field, self.ships)
+            self.player_field.display(show_ships=True)
+
+            if self.player_field.ships_alive == 0:
+                print('Вы проиграли! Все ваши корабли потоплены')
+                break
+
     def player_turn(self, x, y):
         x = "ABCDEFGHIJ".index(x)
         y -= 1
@@ -83,5 +115,17 @@ class BattleshipGame:
         else:
             print('Промах!')
 
+    def computer_turn(self):
+        x = random.randint(0, self.size - 1)
+        y = random.randint(0, self.size - 1)
 
+        if self.player_field.grid[y][x] == 'S':
+            print('Компьютер попал!')
+            self.player_field.grid[y][x] = 'x'
+            self.player_field.ships_alive -= 1
+        else:
+            print('Компьютер промахнулся!')
+
+game = BattleshipGame()
+game.play()
 
