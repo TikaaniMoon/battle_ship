@@ -128,29 +128,47 @@ class BattleshipGame:
         x = "ABCDEFGHIJ".index(x)
         y -= 1
 
-        if self.computer_field.grid[y][x] == 'S':
-            print('Вы попали!')
-            self.computer_field.grid[y][x] = 'X'
-            self.computer_field.ships_alive -= 1
-        elif self.computer_field.grid[y][x] is None:
-            print('Промах!')
-            self.computer_field.grid[y][x] = '*'
-        else:
-            print('Вы уже стреляли в эту точку!')
+        while True:
+            if self.computer_field.grid[y][x] == 'S':
+                print('Вы попали! Ходите снова.')
+                self.computer_field.grid[y][x] = 'X'
+                self.computer_field.ships_alive -= 1
+
+                if self.computer_field.ships_alive == 0:
+                    print('Вы победили! Все корабли компьютера потоплены')
+                    return
+
+                x = input('Введите координату x - букву: ').upper()
+                y = int(input('Введите координату y - цифру: '))
+                x = "ABCDEFGHIJ".index(x)
+                y -= 1
+            elif self.computer_field.grid[y][x] is None:
+                print('Промах! Ход переходит к компьютеру.')
+                self.computer_field.grid[y][x] = '*'
+                break
+            else:
+                print('Вы уже стреляли в эту точку! Попробуйте снова.')
+                x = input('Введите координату x - букву: ').upper()
+                y = int(input('Введите координату y - цифру: '))
+                x = "ABCDEFGHIJ".index(x)
+                y -= 1
 
     def computer_turn(self):
         while True:
             x, y = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
             if self.player_field.grid[y][x] not in ['X', '*']:
-                break
+                if self.player_field.grid[y][x] == 'S':
+                    print('Компьютер попал! Ходит снова.')
+                    self.player_field.grid[y][x] = 'X'
+                    self.player_field.ships_alive -= 1
 
-        if self.player_field.grid[y][x] == 'S':
-            print('Компьютер попал!')
-            self.player_field.grid[y][x] = 'X'
-            self.player_field.ships_alive -= 1
-        else:
-            print('Компьютер промахнулся!')
-            self.player_field.grid[y][x] = '*'
+                    if self.player_field.ships_alive == 0:
+                        print('Вы проиграли! Все ваши корабли потоплены')
+                        return
+                else:
+                    print('Компьютер промахнулся! Ход переходит к игроку.')
+                    self.player_field.grid[y][x] = '*'
+                    break
 
     def show_fields(self):
         print("\nПоле компьютера:")
